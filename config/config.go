@@ -10,14 +10,11 @@ import (
 )
 
 const (
-	BTLM_HomeDir      = ".btlmaster"
-	BTLM_CFG_FileName = "btlmaster.json"
+	BTL_HomeDir      = ".beatles"
+	BTL_CFG_FileName = "beatles.json"
 )
 
-type BtlMasterConf struct {
-	EthAccessPoint string `json:"eth_access_point"`
-	TrxAccessPoint string `json:"trx_access_point"`
-
+type BtlConf struct {
 	CmdListenPort  string `json:"cmdlistenport"`
 	HttpServerPort int    `json:"http_server_port"`
 	WalletSavePath string `json:"wallet_save_path"`
@@ -25,16 +22,21 @@ type BtlMasterConf struct {
 	ApiPath       string `json:"api_path"`
 	PurchasePath  string `json:"purchase_path"`
 	ListMinerPath string `json:"list_miner_path"`
+
+	StreamPort int    `json:"stream_port"`
+	StreamIP   string `json:"stream_ip"`
+
+	MasterAccessUrl string `json:"master_access_url"`
 }
 
 var (
-	btlmcfgInst     *BtlMasterConf
-	btmlcfgInstLock sync.Mutex
+	btlcfgInst     *BtlConf
+	btlcfgInstLock sync.Mutex
 )
 
-func (bc *BtlMasterConf) InitCfg() *BtlMasterConf {
-	bc.HttpServerPort = 50101
-	bc.CmdListenPort = "127.0.0.1:50500"
+func (bc *BtlConf) InitCfg() *BtlConf {
+	bc.HttpServerPort = 50511
+	bc.CmdListenPort = "127.0.0.1:50501"
 	bc.WalletSavePath = "wallet.json"
 
 	bc.ApiPath = "api"
@@ -44,12 +46,12 @@ func (bc *BtlMasterConf) InitCfg() *BtlMasterConf {
 	return bc
 }
 
-func (bc *BtlMasterConf) Load() *BtlMasterConf {
-	if !tools.FileExists(GetBtlmCFGFile()) {
+func (bc *BtlConf) Load() *BtlConf {
+	if !tools.FileExists(GetBtlCFGFile()) {
 		return nil
 	}
 
-	jbytes, err := tools.OpenAndReadAll(GetBtlmCFGFile())
+	jbytes, err := tools.OpenAndReadAll(GetBtlCFGFile())
 	if err != nil {
 		log.Println("load file failed", err)
 		return nil
@@ -65,35 +67,35 @@ func (bc *BtlMasterConf) Load() *BtlMasterConf {
 
 }
 
-func newBtlmCfg() *BtlMasterConf {
+func newBtlmCfg() *BtlConf {
 
-	bc := &BtlMasterConf{}
+	bc := &BtlConf{}
 
 	bc.InitCfg()
 
 	return bc
 }
 
-func GetCBtlm() *BtlMasterConf {
-	if btlmcfgInst == nil {
-		btmlcfgInstLock.Lock()
-		defer btmlcfgInstLock.Unlock()
-		if btlmcfgInst == nil {
-			btlmcfgInst = newBtlmCfg()
+func GetCBtl() *BtlConf {
+	if btlcfgInst == nil {
+		btlcfgInstLock.Lock()
+		defer btlcfgInstLock.Unlock()
+		if btlcfgInst == nil {
+			btlcfgInst = newBtlmCfg()
 		}
 	}
 
-	return btlmcfgInst
+	return btlcfgInst
 }
 
-func PreLoad() *BtlMasterConf {
-	bc := &BtlMasterConf{}
+func PreLoad() *BtlConf {
+	bc := &BtlConf{}
 
 	return bc.Load()
 }
 
-func LoadFromCfgFile(file string) *BtlMasterConf {
-	bc := &BtlMasterConf{}
+func LoadFromCfgFile(file string) *BtlConf {
+	bc := &BtlConf{}
 
 	bc.InitCfg()
 
@@ -109,72 +111,72 @@ func LoadFromCfgFile(file string) *BtlMasterConf {
 		return nil
 	}
 
-	btmlcfgInstLock.Lock()
-	defer btmlcfgInstLock.Unlock()
-	btlmcfgInst = bc
+	btlcfgInstLock.Lock()
+	defer btlcfgInstLock.Unlock()
+	btlcfgInst = bc
 
 	return bc
 
 }
 
-func LoadFromCmd(initfromcmd func(cmdbc *BtlMasterConf) *BtlMasterConf) *BtlMasterConf {
-	btmlcfgInstLock.Lock()
-	defer btmlcfgInstLock.Unlock()
+func LoadFromCmd(initfromcmd func(cmdbc *BtlConf) *BtlConf) *BtlConf {
+	btlcfgInstLock.Lock()
+	defer btlcfgInstLock.Unlock()
 
 	lbc := newBtlmCfg().Load()
 
 	if lbc != nil {
-		btlmcfgInst = lbc
+		btlcfgInst = lbc
 	} else {
 		lbc = newBtlmCfg()
 	}
 
-	btlmcfgInst = initfromcmd(lbc)
+	btlcfgInst = initfromcmd(lbc)
 
-	return btlmcfgInst
+	return btlcfgInst
 }
 
-func GetBtlmCHomeDir() string {
+func GetBtlHomeDir() string {
 	curHome, err := tools.Home()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return path.Join(curHome, BTLM_HomeDir)
+	return path.Join(curHome, BTL_HomeDir)
 }
 
-func GetBtlmCFGFile() string {
-	return path.Join(GetBtlmCHomeDir(), BTLM_CFG_FileName)
+func GetBtlCFGFile() string {
+	return path.Join(GetBtlHomeDir(), BTL_CFG_FileName)
 }
 
-func (bc *BtlMasterConf) Save() {
+func (bc *BtlConf) Save() {
 	jbytes, err := json.MarshalIndent(*bc, " ", "\t")
 
 	if err != nil {
 		log.Println("Save BASD Configuration json marshal failed", err)
 	}
 
-	if !tools.FileExists(GetBtlmCHomeDir()) {
-		os.MkdirAll(GetBtlmCHomeDir(), 0755)
+	if !tools.FileExists(GetBtlHomeDir()) {
+		os.MkdirAll(GetBtlHomeDir(), 0755)
 	}
 
-	err = tools.Save2File(jbytes, GetBtlmCFGFile())
+	err = tools.Save2File(jbytes, GetBtlCFGFile())
 	if err != nil {
 		log.Println("Save BASD Configuration to file failed", err)
 	}
 
 }
 
-func (bc *BtlMasterConf) GetPurchasePath() string {
+func (bc *BtlConf) GetPurchasePath() string {
 	return "http://" + bc.ApiPath + "/" + bc.PurchasePath
 }
 
-func (bc *BtlMasterConf) GetLittMinerPath() string {
+func (bc *BtlConf) GetLittMinerPath() string {
 	return "http://" + bc.ApiPath + "/" + bc.ListMinerPath
 }
 
 func IsInitialized() bool {
-	if tools.FileExists(GetBtlmCFGFile()) {
+	if tools.FileExists(GetBtlCFGFile()) {
 		return true
 	}
 

@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 # The name of the executable (default is current directory name)
 BASENAME := $(shell echo $${PWD\#\#*/})
-TARGET := win-amd64-bmtl.exe
+TARGET := win-amd64-beatles.exe
 .DEFAULT_GOAL: $(TARGET)
 
 # These will be provided to the target

@@ -62,8 +62,8 @@ func inputChoose() (choose string, err error) {
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cc",
-	Short: "start chat client in current shell",
-	Long:  `start chat client in current shell`,
+	Short: "start beatles in current shell",
+	Long:  `start beatles in current shell`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		_, err := cmdcommon.IsProcessCanStarted()
@@ -73,7 +73,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		InitCfg()
-		cfg := config.GetCBtlm()
+		cfg := config.GetCBtl()
 		cfg.Save()
 		//
 		//if !chatcrypt.KeyIsGenerated() {
@@ -141,10 +141,10 @@ func InitCfg() {
 //
 //}
 
-func cfginit(bc *config.BtlMasterConf) *config.BtlMasterConf {
+func cfginit(bc *config.BtlConf) *config.BtlConf {
 	cfg := bc
 	if remoteethaccesspoint != "" {
-		cfg.EthAccessPoint = remoteethaccesspoint
+		//cfg.EthAccessPoint = remoteethaccesspoint
 	}
 	//if cmdroottcpport > 0 && cmdroottcpport < 65535 {
 	//	cfg.TcpPort = cmdroottcpport

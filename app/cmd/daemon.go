@@ -29,8 +29,8 @@ import (
 // daemonCmd represents the daemon command
 var daemonCmd = &cobra.Command{
 	Use:   "daemon",
-	Short: "beatles master start in backend",
-	Long:  `beatles master start in backend`,
+	Short: "beatles start in backend",
+	Long:  `beatles start in backend`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		_, err := cmdcommon.IsProcessCanStarted()
@@ -40,14 +40,14 @@ var daemonCmd = &cobra.Command{
 		}
 
 		InitCfg()
-		cfg := config.GetCBtlm()
+		cfg := config.GetCBtl()
 		cfg.Save()
 
-		daemondir := config.GetBtlmCHomeDir()
+		daemondir := config.GetBtlHomeDir()
 		cntxt := daemon.Context{
-			PidFileName: path.Join(daemondir, "beatlesm.pid"),
+			PidFileName: path.Join(daemondir, "beatles.pid"),
 			PidFilePerm: 0644,
-			LogFileName: path.Join(daemondir, "beatlesm.log"),
+			LogFileName: path.Join(daemondir, "beatles.log"),
 			LogFilePerm: 0640,
 			WorkDir:     daemondir,
 			Umask:       027,
@@ -58,7 +58,7 @@ var daemonCmd = &cobra.Command{
 			log.Fatal("Unable to run: ", err)
 		}
 		if d != nil {
-			log.Println("beatles master starting, please check log at:", path.Join(daemondir, "beatlesm.log"))
+			log.Println("beatles starting, please check log at:", path.Join(daemondir, "beatles.log"))
 			return
 		}
 		defer cntxt.Release()

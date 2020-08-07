@@ -43,7 +43,7 @@ func (cds *CmdDefaultServer) stop() string {
 		cds.Stop()
 	}()
 
-	return "chat client stopped"
+	return "beatles stopped"
 }
 
 func encapResp(msg string) *cmdpb.DefaultResp {
@@ -54,7 +54,7 @@ func encapResp(msg string) *cmdpb.DefaultResp {
 }
 
 func (cds *CmdDefaultServer) configShow() string {
-	cfg := config.GetCBtlm()
+	cfg := config.GetCBtl()
 
 	bapc, err := json.MarshalIndent(*cfg, "", "\t")
 	if err != nil {

@@ -26,8 +26,8 @@ import (
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
-	Short: "stop chat client",
-	Long:  `stop chat client`,
+	Short: "stop beatles",
+	Long:  `stop beatles`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if _, err := cmdcommon.IsProcessStarted(); err != nil {

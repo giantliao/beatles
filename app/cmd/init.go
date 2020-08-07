@@ -27,8 +27,8 @@ var remoteethaccesspoint string
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "init chat client",
-	Long:  `init chat client`,
+	Short: "init beatles",
+	Long:  `init beatles`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 
@@ -40,7 +40,7 @@ var initCmd = &cobra.Command{
 
 		InitCfg()
 
-		cfg := config.GetCBtlm()
+		cfg := config.GetCBtl()
 
 		cfg.Save()
 
