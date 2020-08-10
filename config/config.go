@@ -43,6 +43,7 @@ func (bc *BtlConf) InitCfg() *BtlConf {
 	bc.PurchasePath = "purchase"
 	bc.ListMinerPath = "list"
 
+	bc.StreamPort = 50520
 	return bc
 }
 
@@ -165,6 +166,10 @@ func (bc *BtlConf) Save() {
 		log.Println("Save BASD Configuration to file failed", err)
 	}
 
+}
+
+func (bc *BtlConf)GetWalletSavePath() string  {
+	return path.Join(GetBtlHomeDir(),bc.WalletSavePath)
 }
 
 func (bc *BtlConf) GetPurchasePath() string {
