@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/kprc/libeth/account"
 	"github.com/kprc/nbsnetwork/tools"
 	"log"
 	"os"
@@ -23,10 +24,10 @@ type BtlConf struct {
 	PurchasePath  string `json:"purchase_path"`
 	ListMinerPath string `json:"list_miner_path"`
 
-	StreamPort int    `json:"stream_port"`
-	StreamIP   string `json:"stream_ip"`
+	StreamPort int `json:"stream_port"`
 
-	MasterAccessUrl string `json:"master_access_url"`
+	MasterAccessUrl   string `json:"master_access_url"`
+	LicenseServerAddr account.BeatleAddress
 }
 
 var (
@@ -35,7 +36,6 @@ var (
 )
 
 func (bc *BtlConf) InitCfg() *BtlConf {
-	bc.HttpServerPort = 50511
 	bc.CmdListenPort = "127.0.0.1:50501"
 	bc.WalletSavePath = "wallet.json"
 
@@ -43,7 +43,6 @@ func (bc *BtlConf) InitCfg() *BtlConf {
 	bc.PurchasePath = "purchase"
 	bc.ListMinerPath = "list"
 
-	bc.StreamPort = 50520
 	return bc
 }
 
@@ -168,8 +167,8 @@ func (bc *BtlConf) Save() {
 
 }
 
-func (bc *BtlConf)GetWalletSavePath() string  {
-	return path.Join(GetBtlHomeDir(),bc.WalletSavePath)
+func (bc *BtlConf) GetWalletSavePath() string {
+	return path.Join(GetBtlHomeDir(), bc.WalletSavePath)
 }
 
 func (bc *BtlConf) GetPurchasePath() string {
@@ -186,4 +185,14 @@ func IsInitialized() bool {
 	}
 
 	return false
+}
+
+func (bc *BtlConf) SetHttpPort(port int) {
+	bc.HttpServerPort = port
+	bc.Save()
+}
+
+func (bc *BtlConf) SetStreamPort(port int) {
+	bc.StreamPort = port
+	bc.Save()
 }

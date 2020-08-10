@@ -1,6 +1,5 @@
 package wallet
 
-
 import (
 	"errors"
 	"github.com/giantliao/beatles/config"
@@ -48,10 +47,3 @@ func LoadWallet(auth string) error {
 	}
 	return nil
 }
-
-
-
-
-
-
-

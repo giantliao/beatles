@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/giantliao/beatles/wallet"
 	"github.com/howeyc/gopass"
 	"os"
 
@@ -75,11 +76,6 @@ var rootCmd = &cobra.Command{
 		InitCfg()
 		cfg := config.GetCBtl()
 		cfg.Save()
-		//
-		//if !chatcrypt.KeyIsGenerated() {
-		//	log.Println("please create account first")
-		//	return
-		//}
 
 		if keypassword == "" {
 			if keypassword, err = inputpassword(); err != nil {
@@ -88,14 +84,11 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		//chatcrypt.LoadKey(keypassword)
+		err = wallet.LoadWallet(keypassword)
+		if err != nil {
+			panic("load wallet failed")
+		}
 
-		//if config.IsUserIdentifyReceived() {
-		//	config.LoadUserIdentify()
-		//}
-
-		//go httpservice.StartWebDaemon()
-		//msgdrive.RegMsgDriveFunc(chatmeta.FetchGroupKey2)
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},
 }
