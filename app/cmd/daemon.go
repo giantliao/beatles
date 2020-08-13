@@ -41,6 +41,12 @@ var daemonCmd = &cobra.Command{
 
 		InitCfg()
 		cfg := config.GetCBtl()
+
+		if cfg.LicenseServerAddr == "" || cfg.Location == "" || cfg.MasterAccessUrl == ""{
+			log.Println("please initial first")
+			return
+		}
+
 		cfg.Save()
 
 		daemondir := config.GetBtlHomeDir()
@@ -62,11 +68,9 @@ var daemonCmd = &cobra.Command{
 			return
 		}
 		defer cntxt.Release()
-		//
-		//if config.IsUserIdentifyReceived() {
-		//	config.LoadUserIdentify()
-		//}
-		//msgdrive.RegMsgDriveFunc(chatmeta.FetchGroupKey2)
+
+
+
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},
 }

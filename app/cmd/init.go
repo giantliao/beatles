@@ -18,12 +18,17 @@ package cmd
 import (
 	"github.com/giantliao/beatles/app/cmdcommon"
 	"github.com/giantliao/beatles/config"
+	"github.com/kprc/libeth/account"
+	"net"
 
 	"github.com/spf13/cobra"
 	"log"
 )
 
-var remoteethaccesspoint string
+var masterAccessUrl string
+var licenseServerBetalesAddr string
+var minerLocation string
+var minerServerAddr string
 
 var initCmd = &cobra.Command{
 	Use:   "init",
@@ -35,6 +40,24 @@ var initCmd = &cobra.Command{
 		_, err = cmdcommon.IsProcessCanStarted()
 		if err != nil {
 			log.Println(err)
+			return
+		}
+		if masterAccessUrl == "" || net.ParseIP(masterAccessUrl)==nil{
+			log.Println("please set correct master ip")
+			return
+		}
+
+		if licenseServerBetalesAddr == "" || !(account.BeatleAddress(licenseServerBetalesAddr).IsValid()){
+			log.Println("please beatles address")
+			return
+		}
+
+		if minerLocation == ""{
+			log.Println("please miner location")
+			return
+		}
+		if minerServerAddr != "" && net.ParseIP(minerServerAddr) == nil{
+			log.Println("please set correct miner ip address")
 			return
 		}
 
@@ -56,7 +79,11 @@ func init() {
 	// and all subcommands, e.g.:
 	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
 	//initCmd.Flags().StringVarP(&keypassword, "password", "p", "", "password for key encrypt")
-	initCmd.Flags().StringVarP(&remoteethaccesspoint, "host", "r", "", "eth access point")
+	initCmd.Flags().StringVarP(&masterAccessUrl, "master-ip", "m", "", "master ip address")
+	initCmd.Flags().StringVarP(&licenseServerBetalesAddr, "master-beatles-addr", "b", "", "beatles address")
+	initCmd.Flags().StringVarP(&minerLocation, "miner-geography-addr", "g", "", "geography address")
+	initCmd.Flags().StringVarP(&minerServerAddr, "local-stream-server-ip","s","","miner stream server ip address")
+
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")

@@ -2,9 +2,12 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/kprc/libeth/account"
 	"github.com/kprc/nbsnetwork/tools"
+	"strings"
 	"log"
+	"net"
 	"os"
 	"path"
 	"sync"
@@ -17,17 +20,23 @@ const (
 
 type BtlConf struct {
 	CmdListenPort  string `json:"cmdlistenport"`
-	HttpServerPort int    `json:"http_server_port"`
-	WalletSavePath string `json:"wallet_save_path"`
 
 	ApiPath       string `json:"api_path"`
 	PurchasePath  string `json:"purchase_path"`
 	ListMinerPath string `json:"list_miner_path"`
+	RegisterMinerPath string `json:"register_miner_path"`
 
+	HttpServerPort int    `json:"http_server_port"`
 	StreamPort int `json:"stream_port"`
+	StreamIP   net.IP `json:"stream_ip"`
 
 	MasterAccessUrl   string `json:"master_access_url"`
 	LicenseServerAddr account.BeatleAddress
+	Location string `json:"location"`
+
+	WalletSavePath string `json:"wallet_save_path"`
+	DbPath  string `json:"db_path"`
+	ExpireDb string `json:"expire_db_path"`
 }
 
 var (
@@ -42,6 +51,10 @@ func (bc *BtlConf) InitCfg() *BtlConf {
 	bc.ApiPath = "api"
 	bc.PurchasePath = "purchase"
 	bc.ListMinerPath = "list"
+	bc.RegisterMinerPath = "reg"
+
+	bc.ExpireDb = "expire.db"
+	bc.DbPath = "db"
 
 	return bc
 }
@@ -171,13 +184,20 @@ func (bc *BtlConf) GetWalletSavePath() string {
 	return path.Join(GetBtlHomeDir(), bc.WalletSavePath)
 }
 
-func (bc *BtlConf) GetPurchasePath() string {
-	return "http://" + bc.ApiPath + "/" + bc.PurchasePath
+func (bc *BtlConf)GetDbPath() string {
+	dbpath:=path.Join(GetBtlHomeDir(),bc.DbPath)
+
+	if !tools.FileExists(dbpath){
+		os.MkdirAll(dbpath,0755)
+	}
+
+	return dbpath
 }
 
-func (bc *BtlConf) GetLittMinerPath() string {
-	return "http://" + bc.ApiPath + "/" + bc.ListMinerPath
+func (bc *BtlConf)GetExpireDbFile() string  {
+	return path.Join(bc.GetDbPath(),bc.ExpireDb)
 }
+
 
 func IsInitialized() bool {
 	if tools.FileExists(GetBtlCFGFile()) {
@@ -195,4 +215,36 @@ func (bc *BtlConf) SetHttpPort(port int) {
 func (bc *BtlConf) SetStreamPort(port int) {
 	bc.StreamPort = port
 	bc.Save()
+}
+
+func (bc *BtlConf)SetStreamIP(ipstr string)  error{
+	ip:= net.ParseIP(ipstr)
+	if ip == nil{
+		return errors.New("ip address format not correct")
+	}
+
+	bc.StreamIP = ip
+
+	return nil
+}
+
+func (bc *BtlConf) GetpurchaseWebPath() string {
+	return "/" + bc.ApiPath + "/" + bc.PurchasePath
+}
+
+func (bc *BtlConf) GetListMinersWebPath() string {
+	return "/" + bc.ApiPath + "/" + bc.ListMinerPath
+}
+
+func (bc *BtlConf) GetRegisterMinerWebPath() string {
+	return "/" + bc.ApiPath + "/" + bc.RegisterMinerPath
+}
+
+func (bc *BtlConf)GetMasterAccessUrl() string  {
+	if strings.Contains(bc.MasterAccessUrl,"http"){
+		return bc.MasterAccessUrl
+	}
+
+	return "http://"+bc.MasterAccessUrl
+
 }

@@ -1,6 +1,8 @@
 package cmdservice
 
 import (
+	"github.com/giantliao/beatles/webserver"
+	"github.com/giantliao/beatles/streamserver"
 	"google.golang.org/grpc"
 	"sync"
 
@@ -85,7 +87,8 @@ func (cs *cmdServer) StopCmdService() {
 
 func stop() {
 
-	//httpservice.StopWebDaemon()
+	webserver.StopWebDaemon()
+	streamserver.StopStreamserver()
 	GetCmdServerInst().StopCmdService()
 
 }

@@ -33,6 +33,10 @@ func newWallet(auth, savepath, remoteeth string) wallet.WalletIntf {
 func LoadWallet(auth string) error {
 	cfg := config.GetCBtl()
 
+	if beatlesWallet != nil{
+		return nil
+	}
+
 	if !tools.FileExists(cfg.GetWalletSavePath()) {
 		beatlesWallet = newWallet(auth, cfg.GetWalletSavePath(), "")
 		if beatlesWallet == nil {

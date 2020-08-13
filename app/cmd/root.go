@@ -17,8 +17,12 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/giantliao/beatles/streamserver"
 	"github.com/giantliao/beatles/wallet"
+	"github.com/giantliao/beatles/webserver"
 	"github.com/howeyc/gopass"
+	"github.com/kprc/libeth/account"
+	"net"
 	"os"
 
 	"github.com/giantliao/beatles/app/cmdcommon"
@@ -75,6 +79,12 @@ var rootCmd = &cobra.Command{
 
 		InitCfg()
 		cfg := config.GetCBtl()
+
+		if cfg.LicenseServerAddr == "" || cfg.Location == "" || cfg.MasterAccessUrl == ""{
+			log.Println("please initial first")
+			return
+		}
+
 		cfg.Save()
 
 		if keypassword == "" {
@@ -88,6 +98,13 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			panic("load wallet failed")
 		}
+
+		//start web server
+
+		go webserver.StartWebDaemon()
+
+		//start stream server
+		go streamserver.StartStreamServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},
@@ -111,62 +128,24 @@ func InitCfg() {
 	} else {
 		config.LoadFromCmd(cfginit)
 	}
-	//Set2SmartContract()
+
 }
 
-//
-//func Set2SmartContract() {
-//	cfg := config.GetBasDisCfg()
-//
-//	//fmt.Println(*cfg)
-//
-//	//if cfg.RopstenNAP != "" {
-//	//	BAS_Ethereum.RopstenNetworkAccessPoint = cfg.RopstenNAP
-//	//}
-//	//
-//	//if cfg.TokenAddr != "" {
-//	//	BAS_Ethereum.BASTokenAddress = cfg.TokenAddr
-//	//}
-//	//
-//	//if cfg.MgrAddr != "" {
-//	//	BAS_Ethereum.BASManagerSimpleAddress = cfg.MgrAddr
-//	//}
-//
-//}
 
 func cfginit(bc *config.BtlConf) *config.BtlConf {
 	cfg := bc
-	if remoteethaccesspoint != "" {
-		//cfg.EthAccessPoint = remoteethaccesspoint
+	if masterAccessUrl != "" {
+		cfg.MasterAccessUrl = masterAccessUrl
 	}
-	//if cmdroottcpport > 0 && cmdroottcpport < 65535 {
-	//	cfg.TcpPort = cmdroottcpport
-	//}
-	//if cmdropstennap != "" {
-	//	cfg.RopstenNAP = cmdropstennap
-	//}
-	//if cmdbastokenaddr != "" {
-	//	cfg.TokenAddr = cmdbastokenaddr
-	//}
-	//if cmdbasmgraddr != "" {
-	//	cfg.MgrAddr = cmdbasmgraddr
-	//}
-	//if cmddohserverport > 0 && cmddohserverport < 65535 {
-	//	cfg.DohServerPort = cmddohserverport
-	//}
-	//
-	//if cmdcertfile != "" {
-	//	cfg.CertFile = cmdcertfile
-	//}
-	//if cmdkeyfile != "" {
-	//	cfg.KeyFile = cmdkeyfile
-	//}
-	//if cmdquerydnstimeout != 0 {
-	//	cfg.TimeOut = cmdquerydnstimeout
-	//}
-	//if cmdquerydnstrytimes != 0 {
-	//	cfg.TryTimes = cmdquerydnstrytimes
-	//}
+	if licenseServerBetalesAddr != "" {
+		cfg.LicenseServerAddr = account.BeatleAddress(licenseServerBetalesAddr)
+	}
+	if minerLocation != "" {
+		cfg.Location = minerLocation
+	}
+	if minerServerAddr != "" {
+		cfg.StreamIP = net.ParseIP(minerServerAddr)
+	}
 
 	return cfg
 
@@ -184,44 +163,7 @@ func init() {
 	// when this action is called directly.
 	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	//rootCmd.Flags().IntVarP(&cmdroottcpport, "tcp-listen-port", "t", 65566, "local tcp listen port")
-	//rootCmd.Flags().IntVarP(&cmdrootudpport, "udp-listen-port", "u", 65566, "local udp listen port")
-	//rootCmd.Flags().StringVarP(&cmdropstennap, "ropsten-network-access-point", "r", "", "ropsten network access point")
-	//rootCmd.Flags().StringVarP(&cmdbastokenaddr, "bas-token-address", "a", "", "bas token address")
-	//rootCmd.Flags().StringVarP(&cmdbasmgraddr, "bas-mgr-address", "m", "", "bas manager address")
 	rootCmd.Flags().StringVarP(&cmdconfigfilename, "config-file-name", "c", "", "configuration file name")
-	//rootCmd.Flags().StringVarP(&keypassword, "password", "p", "", "password for key encrypt")
-	//rootCmd.Flags().IntVarP(&cmddohserverport, "doh-listen-port", "p", 65566, "local doh server listen port")
-	//rootCmd.Flags().StringVarP(&cmdcertfile, "cert-file", "f", "", "certificate file for tls")
-	//rootCmd.Flags().StringVarP(&cmdkeyfile, "key-file", "k", "", "private key file for tls")
-	//rootCmd.Flags().StringVarP(&cmddnspath, "dns-query-path", "q", "", "path for dns query")
-	//rootCmd.Flags().IntVarP(&cmdquerydnstimeout, "dns-query-time", "o", 0, "max time for wait remote dns server reply")
-	//rootCmd.Flags().IntVarP(&cmdquerydnstrytimes, "dns-query-times", "s", 0, "max times for sending dns to remote dns server ")
+
 }
 
-//
-//// initConfig reads in config file and ENV variables if set.
-//func initConfig() {
-//	if cfgFile != "" {
-//		// Use config file from the flag.
-//		viper.SetConfigFile(cfgFile)
-//	} else {
-//		// Find home directory.
-//		home, err := homedir.Dir()
-//		if err != nil {
-//			fmt.Println(err)
-//			os.Exit(1)
-//		}
-//
-//		// Search config in home directory with name ".app" (without extension).
-//		viper.AddConfigPath(home)
-//		viper.SetConfigName(".app")
-//	}
-//
-//	viper.AutomaticEnv() // read in environment variables that match
-//
-//	// If a config file is found, read it in.
-//	if err := viper.ReadInConfig(); err == nil {
-//		fmt.Println("Using config file:", viper.ConfigFileUsed())
-//	}
-//}
