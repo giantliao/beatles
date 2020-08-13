@@ -223,6 +223,7 @@ func (bc *BtlConf) SetStreamIP(ipstr string) error {
 	}
 
 	bc.StreamIP = ip
+	bc.Save()
 
 	return nil
 }
