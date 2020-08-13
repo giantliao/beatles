@@ -8,42 +8,39 @@ import (
 
 var (
 	keymaplock sync.Mutex
-	keymap map[account.BeatleAddress][32]byte
-	emptykey [32]byte
+	keymap     map[account.BeatleAddress][32]byte
+	emptykey   [32]byte
 )
 
-
-
-func init()  {
+func init() {
 	keymap = make(map[account.BeatleAddress][32]byte)
 }
 
-func GetKey(acct account.BeatleAddress) ([32]byte,error) {
-	if v,ok:=keymap[acct];ok{
-		return v,nil
+func GetKey(acct account.BeatleAddress) ([32]byte, error) {
+	if v, ok := keymap[acct]; ok {
+		return v, nil
 	}
 	keymaplock.Lock()
 	defer keymaplock.Unlock()
-	if v,ok:=keymap[acct];ok{
-		return v,nil
+	if v, ok := keymap[acct]; ok {
+		return v, nil
 	}
 
-	w,err := wallet.GetWallet()
-	if err!=nil{
+	w, err := wallet.GetWallet()
+	if err != nil {
 		return emptykey, err
 	}
 
 	var (
-		key []byte
+		key  []byte
 		aesk [32]byte
 	)
 
 	key, err = w.AesKey2(acct)
-	if err!=nil{
+	if err != nil {
 		return emptykey, err
 	}
-	copy(aesk[:],key)
+	copy(aesk[:], key)
 
-	return aesk,nil
+	return aesk, nil
 }
-

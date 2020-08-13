@@ -12,12 +12,11 @@ import (
 )
 
 type StreamServer struct {
-	addr string
-	quit chan interface{}
-	lis net.Listener
-	session  map[string]net.Conn
-	wg sync.WaitGroup
-
+	addr    string
+	quit    chan interface{}
+	lis     net.Listener
+	session map[string]net.Conn
+	wg      sync.WaitGroup
 }
 
 type CloseConn struct {
@@ -25,8 +24,8 @@ type CloseConn struct {
 	isClosed bool
 }
 
-func (cc *CloseConn)Close() error  {
-	if !cc.isClosed{
+func (cc *CloseConn) Close() error {
+	if !cc.isClosed {
 		cc.isClosed = true
 		return cc.Conn.Close()
 	}
@@ -39,14 +38,13 @@ type CloseListener struct {
 	isClosed bool
 }
 
-func (cl *CloseListener)Close() error  {
-	if !cl.isClosed{
+func (cl *CloseListener) Close() error {
+	if !cl.isClosed {
 		cl.isClosed = true
 		return cl.Listener.Close()
 	}
 	return nil
 }
-
 
 func NewStreamServer() *StreamServer {
 	tcpport := port.TcpPort()
@@ -65,7 +63,7 @@ func (ss *StreamServer) StartServer() error {
 		panic("failed to listen on %s" + ss.addr + " : " + err.Error())
 	}
 
-	ss.lis = &CloseListener{Listener:lis}
+	ss.lis = &CloseListener{Listener: lis}
 	defer ss.lis.Close()
 
 	log.Println("Stream Server start at ", ss.addr)
@@ -78,22 +76,22 @@ func (ss *StreamServer) StartServer() error {
 	return nil
 }
 
-func (ss *StreamServer)serve()  {
+func (ss *StreamServer) serve() {
 	defer ss.wg.Done()
 
 	for {
-		conn, err:=ss.lis.Accept()
-		if err!=nil{
+		conn, err := ss.lis.Accept()
+		if err != nil {
 			select {
 			case <-ss.quit:
 				return
 			default:
-				log.Println("accept error",err)
+				log.Println("accept error", err)
 			}
-		}else{
+		} else {
 			ss.wg.Add(1)
 			go func() {
-				cc:=&CloseConn{Conn:conn}
+				cc := &CloseConn{Conn: conn}
 				ss.handleConn(cc)
 			}()
 		}
@@ -102,35 +100,35 @@ func (ss *StreamServer)serve()  {
 
 }
 
-func (ss *StreamServer)handleConn(conn net.Conn)  {
+func (ss *StreamServer) handleConn(conn net.Conn) {
 	defer ss.wg.Done()
 	defer conn.Close()
-	raddrstr:=conn.RemoteAddr().String()
-	defer delete(ss.session,raddrstr)
+	raddrstr := conn.RemoteAddr().String()
+	defer delete(ss.session, raddrstr)
 
 	conn.(*net.TCPConn).SetKeepAlive(true)
 	ss.session[raddrstr] = conn
 
-	if cs, err:= handshake(conn);err!=nil{
+	if cs, err := handshake(conn); err != nil {
 		return
-	}else{
+	} else {
 		var tgt Addr
-		tgt,err = readAddr(cs)
-		if err!=nil{
+		tgt, err = readAddr(cs)
+		if err != nil {
 			return
 		}
 
 		var rc net.Conn
 
-		rc,err := net.Dial("tcp",tgt.String())
-		if err!=nil{
+		rc, err := net.Dial("tcp", tgt.String())
+		if err != nil {
 			return
 		}
 		defer rc.Close()
 		rc.(*net.TCPConn).SetKeepAlive(true)
-		log.Println("proxy %s <-> %s",cs.RemoteAddr().String(),tgt.String())
-		err = relay2(cs,rc)
-		if err!=nil{
+		log.Println("proxy %s <-> %s", cs.RemoteAddr().String(), tgt.String())
+		err = relay2(cs, rc)
+		if err != nil {
 			if err, ok := err.(net.Error); ok && err.Timeout() {
 				return // ignore i/o timeout
 			}
@@ -139,7 +137,7 @@ func (ss *StreamServer)handleConn(conn net.Conn)  {
 	}
 }
 
-func relay2(left,right net.Conn) error  {
+func relay2(left, right net.Conn) error {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -148,28 +146,28 @@ func relay2(left,right net.Conn) error  {
 			left.SetDeadline(time.Now())
 			wg.Done()
 		}()
-		for{
-			buf:=stream.NewStreamBuf()
-			n,err:=left.Read(buf)
-			if err!=nil{
+		for {
+			buf := stream.NewStreamBuf()
+			n, err := left.Read(buf)
+			if err != nil {
 				return
 			}
 			var nw int
-			nw,err = right.Write(buf[:n])
-			if n!=nw || err!=nil{
+			nw, err = right.Write(buf[:n])
+			if n != nw || err != nil {
 				return
 			}
 		}
 	}()
-	for{
-		buf:=stream.NewStreamBuf()
-		n,err:=right.Read(buf)
-		if err!=nil{
+	for {
+		buf := stream.NewStreamBuf()
+		n, err := right.Read(buf)
+		if err != nil {
 			return err
 		}
 		var nw int
-		nw,err = left.Write(buf[:n])
-		if n!=nw || err!=nil{
+		nw, err = left.Write(buf[:n])
+		if n != nw || err != nil {
 			return err
 		}
 	}
@@ -178,8 +176,6 @@ func relay2(left,right net.Conn) error  {
 
 	return nil
 }
-
-
 
 //func relay(left, right net.Conn) (int64, int64, error) {
 //	type res struct {
@@ -206,13 +202,10 @@ func relay2(left,right net.Conn) error  {
 //	return n, rs.N, err
 //}
 
-
-
-
 func (ss *StreamServer) StopServer() {
 	close(ss.quit)
 	ss.lis.Close()
-	for _,c:=range ss.session{
+	for _, c := range ss.session {
 		c.Close()
 	}
 }

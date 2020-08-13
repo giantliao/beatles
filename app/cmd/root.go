@@ -80,7 +80,7 @@ var rootCmd = &cobra.Command{
 		InitCfg()
 		cfg := config.GetCBtl()
 
-		if cfg.LicenseServerAddr == "" || cfg.Location == "" || cfg.MasterAccessUrl == ""{
+		if cfg.LicenseServerAddr == "" || cfg.Location == "" || cfg.MasterAccessUrl == "" {
 			log.Println("please initial first")
 			return
 		}
@@ -131,7 +131,6 @@ func InitCfg() {
 
 }
 
-
 func cfginit(bc *config.BtlConf) *config.BtlConf {
 	cfg := bc
 	if masterAccessUrl != "" {
@@ -166,4 +165,3 @@ func init() {
 	rootCmd.Flags().StringVarP(&cmdconfigfilename, "config-file-name", "c", "", "configuration file name")
 
 }
-

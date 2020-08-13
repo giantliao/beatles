@@ -3,25 +3,25 @@ package streamserver
 import "sync"
 
 var (
-	streamserver *StreamServer
+	streamserver     *StreamServer
 	streamserverlock sync.Mutex
 )
 
-func GetStreamServer() *StreamServer  {
-	if streamserver == nil{
+func GetStreamServer() *StreamServer {
+	if streamserver == nil {
 		streamserverlock.Lock()
 		defer streamserverlock.Unlock()
-		if streamserver == nil{
+		if streamserver == nil {
 			streamserver = NewStreamServer()
 		}
 	}
 	return streamserver
 }
 
-func StartStreamServer() error  {
+func StartStreamServer() error {
 	return GetStreamServer().StartServer()
 }
 
-func StopStreamserver()  {
+func StopStreamserver() {
 	GetStreamServer().StopServer()
 }

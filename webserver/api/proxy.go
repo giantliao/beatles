@@ -10,11 +10,10 @@ import (
 )
 
 type BeatlesMasterProxy struct {
-
 }
 
 func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST"{
+	if r.Method != "POST" {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "not a post request")
 		return
@@ -24,14 +23,14 @@ func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "read http body error")
 		return
-	}else{
-		proxyUrl:=""
-		cfg:=config.GetCBtl()
-		if strings.Contains(r.URL.Path,cfg.ListMinerPath){
-			proxyUrl = cfg.GetMasterAccessUrl()+cfg.GetListMinersWebPath()
-		}else if strings.Contains(r.URL.Path,cfg.PurchasePath){
-			proxyUrl = cfg.GetMasterAccessUrl()+cfg.GetpurchaseWebPath()
-		}else{
+	} else {
+		proxyUrl := ""
+		cfg := config.GetCBtl()
+		if strings.Contains(r.URL.Path, cfg.ListMinerPath) {
+			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetListMinersWebPath()
+		} else if strings.Contains(r.URL.Path, cfg.PurchasePath) {
+			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetpurchaseWebPath()
+		} else {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "bad rquest url")
 			return
@@ -40,14 +39,14 @@ func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		var result string
 		var code int
 
-		result,code,err = httputil.Post(proxyUrl,string(contents),false)
-		if err!=nil{
+		result, code, err = httputil.Post(proxyUrl, string(contents), false)
+		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
 			return
 		}
 
-		if code != 200{
+		if code != 200 {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "proxy error")
 			return

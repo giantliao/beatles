@@ -26,7 +26,7 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "start stream server and web server",
-	Long: `start stream server and web server`,
+	Long:  `start stream server and web server`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 		if _, err = cmdcommon.IsProcessStarted(); err != nil {
@@ -42,9 +42,9 @@ var runCmd = &cobra.Command{
 		}
 
 		var param []string
-		param = append(param,keypassword)
+		param = append(param, keypassword)
 
-		cmdclient.StringOpCmdSend("", cmdcommon.CMD_RUN,param)
+		cmdclient.StringOpCmdSend("", cmdcommon.CMD_RUN, param)
 
 	},
 }

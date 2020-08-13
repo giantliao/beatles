@@ -42,21 +42,21 @@ var initCmd = &cobra.Command{
 			log.Println(err)
 			return
 		}
-		if masterAccessUrl == "" || net.ParseIP(masterAccessUrl)==nil{
+		if masterAccessUrl == "" || net.ParseIP(masterAccessUrl) == nil {
 			log.Println("please set correct master ip")
 			return
 		}
 
-		if licenseServerBetalesAddr == "" || !(account.BeatleAddress(licenseServerBetalesAddr).IsValid()){
+		if licenseServerBetalesAddr == "" || !(account.BeatleAddress(licenseServerBetalesAddr).IsValid()) {
 			log.Println("please beatles address")
 			return
 		}
 
-		if minerLocation == ""{
+		if minerLocation == "" {
 			log.Println("please miner location")
 			return
 		}
-		if minerServerAddr != "" && net.ParseIP(minerServerAddr) == nil{
+		if minerServerAddr != "" && net.ParseIP(minerServerAddr) == nil {
 			log.Println("please set correct miner ip address")
 			return
 		}
@@ -82,7 +82,7 @@ func init() {
 	initCmd.Flags().StringVarP(&masterAccessUrl, "master-ip", "m", "", "master ip address")
 	initCmd.Flags().StringVarP(&licenseServerBetalesAddr, "master-beatles-addr", "b", "", "beatles address")
 	initCmd.Flags().StringVarP(&minerLocation, "miner-geography-addr", "g", "", "geography address")
-	initCmd.Flags().StringVarP(&minerServerAddr, "local-stream-server-ip","s","","miner stream server ip address")
+	initCmd.Flags().StringVarP(&minerServerAddr, "local-stream-server-ip", "s", "", "miner stream server ip address")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

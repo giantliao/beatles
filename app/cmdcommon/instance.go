@@ -10,8 +10,8 @@ const (
 )
 
 const (
-	CMD_ACCOUNT_CREATE     int32 = 2
-	CMD_ACCOUNT_LOAD       int32 = 3
+	CMD_ACCOUNT_CREATE int32 = 2
+	CMD_ACCOUNT_LOAD   int32 = 3
 
-	CMD_RUN                int32 = 4
+	CMD_RUN int32 = 4
 )

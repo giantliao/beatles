@@ -33,7 +33,7 @@ func newWallet(auth, savepath, remoteeth string) wallet.WalletIntf {
 func LoadWallet(auth string) error {
 	cfg := config.GetCBtl()
 
-	if beatlesWallet != nil{
+	if beatlesWallet != nil {
 		return nil
 	}
 

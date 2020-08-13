@@ -1,8 +1,8 @@
 package cmdservice
 
 import (
-	"github.com/giantliao/beatles/webserver"
 	"github.com/giantliao/beatles/streamserver"
+	"github.com/giantliao/beatles/webserver"
 	"google.golang.org/grpc"
 	"sync"
 

@@ -31,9 +31,7 @@ func (cso *CmdStringOPSrv) StringOpDo(cxt context.Context, so *cmdpb.StringOP) (
 	return encapResp(msg), nil
 }
 
-
 func run(passwd string) string {
-
 
 	err := wallet.LoadWallet(passwd)
 	if err != nil {
@@ -50,7 +48,6 @@ func run(passwd string) string {
 	return "start successfully"
 
 }
-
 
 func int64time2string(t int64) string {
 	tm := time.Unix(t/1000, 0)

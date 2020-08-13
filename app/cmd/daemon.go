@@ -42,7 +42,7 @@ var daemonCmd = &cobra.Command{
 		InitCfg()
 		cfg := config.GetCBtl()
 
-		if cfg.LicenseServerAddr == "" || cfg.Location == "" || cfg.MasterAccessUrl == ""{
+		if cfg.LicenseServerAddr == "" || cfg.Location == "" || cfg.MasterAccessUrl == "" {
 			log.Println("please initial first")
 			return
 		}
@@ -68,8 +68,6 @@ var daemonCmd = &cobra.Command{
 			return
 		}
 		defer cntxt.Release()
-
-
 
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},

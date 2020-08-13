@@ -14,54 +14,50 @@ type ExpireDb struct {
 	cursor *db.DBCusor
 }
 
-
 var (
-	expireDb *ExpireDb
+	expireDb     *ExpireDb
 	expireDbLock sync.Mutex
 )
 
 func newExpireDb() *ExpireDb {
-	cfg:=config.GetCBtl()
-	db:=db.NewFileDb(cfg.GetExpireDbFile()).Load()
+	cfg := config.GetCBtl()
+	db := db.NewFileDb(cfg.GetExpireDbFile()).Load()
 
-	return &ExpireDb{NbsDbInter:db}
+	return &ExpireDb{NbsDbInter: db}
 }
 
-func GetExpireDb() *ExpireDb  {
-	if expireDb == nil{
+func GetExpireDb() *ExpireDb {
+	if expireDb == nil {
 		expireDbLock.Lock()
 		defer expireDbLock.Unlock()
-		if expireDb == nil{
+		if expireDb == nil {
 			expireDb = newExpireDb()
 		}
 	}
 	return expireDb
 }
 
-func (e *ExpireDb) Update(acct account.BeatleAddress,expire int64) {
+func (e *ExpireDb) Update(acct account.BeatleAddress, expire int64) {
 	e.dbLock.Lock()
 	defer e.dbLock.Unlock()
 
-	e.NbsDbInter.Update(acct.String(),strconv.FormatInt(expire,10))
+	e.NbsDbInter.Update(acct.String(), strconv.FormatInt(expire, 10))
 
 }
 
-func (e *ExpireDb)Find(acct account.BeatleAddress) (int64,error) {
+func (e *ExpireDb) Find(acct account.BeatleAddress) (int64, error) {
 	e.dbLock.Lock()
 	defer e.dbLock.Unlock()
 
-	if v, err:=e.NbsDbInter.Find(acct.String());err!=nil{
-		return 0,err
-	}else {
+	if v, err := e.NbsDbInter.Find(acct.String()); err != nil {
+		return 0, err
+	} else {
 		var vi int64
-		vi, err = strconv.ParseInt(v,10,64)
-		if err!=nil{
-			return 0,err
+		vi, err = strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return 0, err
 		}
-		return vi,nil
+		return vi, nil
 	}
 
 }
-
-
-
