@@ -12,6 +12,8 @@
 *.out
 
 beatles
+linux-amd64-beatles
+win-amd64-beatles
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
