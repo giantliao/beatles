@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/giantliao/beatles/register"
 	"github.com/giantliao/beatles/streamserver"
 	"github.com/giantliao/beatles/wallet"
 	"github.com/giantliao/beatles/webserver"
@@ -99,11 +100,17 @@ var rootCmd = &cobra.Command{
 			panic("load wallet failed")
 		}
 
-		//start web server
+		log.Println("register self to beatles master")
+		err = register.RegMiner()
+		if err != nil {
+			log.Println(err)
+			return
+		}
 
+		log.Println("start web server")
 		go webserver.StartWebDaemon()
 
-		//start stream server
+		log.Println("start stream server")
 		go streamserver.StartStreamServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()

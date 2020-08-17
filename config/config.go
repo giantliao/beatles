@@ -245,6 +245,5 @@ func (bc *BtlConf) GetMasterAccessUrl() string {
 		return bc.MasterAccessUrl
 	}
 
-	return "http://" + bc.MasterAccessUrl
-
+	return "http://" + bc.MasterAccessUrl + ":50510"
 }

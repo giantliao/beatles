@@ -9,6 +9,7 @@ import (
 	"github.com/giantliao/beatles/wallet"
 	"github.com/kprc/nbsnetwork/tools/httputil"
 	"log"
+	"strconv"
 )
 
 func RegMiner() error {
@@ -57,7 +58,7 @@ func RegMiner() error {
 		return err
 	}
 	if code != 200 {
-		return errors.New("")
+		return errors.New("register failed, code : " + strconv.Itoa(code))
 	}
 
 	log.Println("register miner self ", result)

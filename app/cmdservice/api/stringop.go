@@ -4,9 +4,11 @@ import (
 	"context"
 	"github.com/giantliao/beatles/app/cmdcommon"
 	"github.com/giantliao/beatles/app/cmdpb"
+	"github.com/giantliao/beatles/register"
 	"github.com/giantliao/beatles/streamserver"
 	"github.com/giantliao/beatles/wallet"
 	"github.com/giantliao/beatles/webserver"
+	"log"
 
 	"time"
 )
@@ -38,11 +40,15 @@ func run(passwd string) string {
 		return "load wallet failed"
 	}
 
-	//start web server
+	log.Println("register self to beatles master")
+	if err = register.RegMiner(); err != nil {
+		return err.Error()
+	}
 
+	log.Println("start web server")
 	go webserver.StartWebDaemon()
 
-	//start stream server
+	log.Println("start stream server")
 	go streamserver.StartStreamServer()
 
 	return "start successfully"
