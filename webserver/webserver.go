@@ -19,6 +19,7 @@ func StartWebDaemon() {
 
 	cfg := config.GetCBtl()
 
+	mux.Handle(cfg.GetNocePriceWebPath(),&api.BeatlesMasterProxy{})
 	mux.Handle(cfg.GetListMinersWebPath(), &api.BeatlesMasterProxy{})
 	mux.Handle(cfg.GetpurchaseWebPath(), &api.BeatlesMasterProxy{})
 
