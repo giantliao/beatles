@@ -30,6 +30,8 @@ func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request)
 			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetListMinersWebPath()
 		} else if strings.Contains(r.URL.Path, cfg.PurchasePath) {
 			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetpurchaseWebPath()
+		} else if strings.Contains(r.URL.Path, cfg.NoncePrice) {
+			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetNocePriceWebPath()
 		} else {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "bad rquest url")
@@ -38,7 +40,6 @@ func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request)
 
 		var result string
 		var code int
-
 		result, code, err = httputil.Post(proxyUrl, string(contents), false)
 		if err != nil {
 			w.WriteHeader(500)
@@ -51,6 +52,7 @@ func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request)
 			fmt.Fprintf(w, "proxy error")
 			return
 		}
+
 		w.WriteHeader(200)
 		w.Write([]byte(result))
 

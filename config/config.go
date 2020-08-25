@@ -22,7 +22,7 @@ type BtlConf struct {
 	CmdListenPort string `json:"cmdlistenport"`
 
 	ApiPath           string `json:"api_path"`
-	NoncePrice		  string `json:"nonce_price"`
+	NoncePrice        string `json:"nonce_price"`
 	PurchasePath      string `json:"purchase_path"`
 	ListMinerPath     string `json:"list_miner_path"`
 	RegisterMinerPath string `json:"register_miner_path"`
@@ -230,8 +230,8 @@ func (bc *BtlConf) SetStreamIP(ipstr string) error {
 	return nil
 }
 
-func (bc *BtlConf)GetNocePriceWebPath() string  {
-	return "/"+bc.ApiPath+"/"+bc.NoncePrice
+func (bc *BtlConf) GetNocePriceWebPath() string {
+	return "/" + bc.ApiPath + "/" + bc.NoncePrice
 }
 
 func (bc *BtlConf) GetpurchaseWebPath() string {
