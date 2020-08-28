@@ -1,7 +1,6 @@
 package wallet
 
 import (
-	"github.com/giantliao/beatles-master/wallet"
 	"github.com/kprc/libeth/account"
 	"sync"
 )
@@ -26,7 +25,7 @@ func GetKey(acct account.BeatleAddress) ([32]byte, error) {
 		return v, nil
 	}
 
-	w, err := wallet.GetWallet()
+	w, err := GetWallet()
 	if err != nil {
 		return emptykey, err
 	}

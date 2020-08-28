@@ -1,9 +1,11 @@
 package streamserver
 
 import (
+	"crypto/aes"
 	"crypto/ed25519"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/giantliao/beatles-protocol/licenses"
 	"github.com/giantliao/beatles-protocol/stream"
@@ -24,11 +26,20 @@ func handshake(conn net.Conn) (net.Conn, error) {
 		return nil, err
 	}
 
-	var aesk [32]byte
-	acct := account.BeatleAddress(b[:n])
+	var (
+		aesk [32]byte
+		iv   [aes.BlockSize]byte
+		cs   net.Conn
+	)
+
+	copy(iv[:], b[:aes.BlockSize])
+	acct := account.BeatleAddress(b[aes.BlockSize:n])
+
+	fmt.Println("acct is ", acct.String())
+
 	aesk, err = wallet.GetKey(acct)
 
-	cs := stream.NewCipherConn(s, aesk)
+	cs, err = stream.NewCipherConnWithIv(s, aesk, iv)
 
 	now := tools.GetNowMsTime()
 	var expire int64

@@ -13,7 +13,7 @@ import (
 
 type StreamServer struct {
 	addr    string
-	quit    chan interface{}
+	quit    chan struct{}
 	lis     net.Listener
 	session map[string]net.Conn
 	wg      sync.WaitGroup
@@ -54,7 +54,11 @@ func NewStreamServer() *StreamServer {
 	cfg := config.GetCBtl()
 	cfg.SetStreamPort(tcpport)
 
-	return &StreamServer{addr: addr}
+	ss := &StreamServer{addr: addr}
+	ss.quit = make(chan struct{})
+	ss.session = make(map[string]net.Conn)
+
+	return ss
 }
 
 func (ss *StreamServer) StartServer() error {
@@ -106,7 +110,7 @@ func (ss *StreamServer) handleConn(conn net.Conn) {
 	raddrstr := conn.RemoteAddr().String()
 	defer delete(ss.session, raddrstr)
 
-	conn.(*net.TCPConn).SetKeepAlive(true)
+	conn.(*CloseConn).Conn.(*net.TCPConn).SetKeepAlive(true)
 	ss.session[raddrstr] = conn
 
 	if cs, err := handshake(conn); err != nil {
@@ -117,7 +121,6 @@ func (ss *StreamServer) handleConn(conn net.Conn) {
 		if err != nil {
 			return
 		}
-
 		var rc net.Conn
 
 		rc, err := net.Dial("tcp", tgt.String())
@@ -126,13 +129,13 @@ func (ss *StreamServer) handleConn(conn net.Conn) {
 		}
 		defer rc.Close()
 		rc.(*net.TCPConn).SetKeepAlive(true)
-		log.Println("proxy %s <-> %s", cs.RemoteAddr().String(), tgt.String())
+		log.Println("proxy ", cs.RemoteAddr().String(), "<->", tgt.String())
 		err = relay2(cs, rc)
 		if err != nil {
 			if err, ok := err.(net.Error); ok && err.Timeout() {
 				return // ignore i/o timeout
 			}
-			log.Println("relay error: %v", err)
+			log.Println("relay error: ", err)
 		}
 	}
 }

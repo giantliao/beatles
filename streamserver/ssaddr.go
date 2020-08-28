@@ -1,7 +1,8 @@
 package streamserver
 
 import (
-	"errors"
+	"encoding/hex"
+	"fmt"
 	"github.com/giantliao/beatles-protocol/stream"
 	"net"
 	"strconv"
@@ -41,31 +42,8 @@ func readAddr(conn net.Conn) (Addr, error) {
 		return nil, err
 	}
 
-	if n < 1 {
-		return nil, errors.New("read addr type length error")
-	}
+	fmt.Println("target is ", Addr(b[:n]).String(), hex.EncodeToString(b[:n]))
 
-	switch b[0] {
-	case AtypDomainName:
-		if n < 2 {
-			return nil, errors.New("domain length error")
-		}
-		if n < (2 + int(b[1]) + 2) {
-			return nil, errors.New("domain name error")
-		}
-		return b[:1+1+int(b[1])+2], nil
-	case AtypIPv4:
-		if n < 1+net.IPv4len+2 {
-			return nil, errors.New("ipv4 error")
-		}
-		return b[:1+net.IPv4len+2], err
-	case AtypIPv6:
-		if n < 1+net.IPv6len+2 {
-			return nil, errors.New("ipv6 error")
-		}
-		return b[:1+net.IPv6len+2], err
-	}
-
-	return nil, errors.New("read addr error")
+	return b[:n], nil
 
 }
