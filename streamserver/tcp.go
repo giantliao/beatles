@@ -172,7 +172,6 @@ func relay2(left, right net.Conn) error {
 		}
 	}
 
-
 	return nil
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/giantliao/beatles/app/cmdcommon"
 	"github.com/giantliao/beatles/app/cmdpb"
 	"github.com/giantliao/beatles/config"
+	"github.com/giantliao/beatles/wallet"
 	"time"
 )
 
@@ -23,6 +24,8 @@ func (cds *CmdDefaultServer) DefaultCmdDo(ctx context.Context,
 		msg = cds.stop()
 	case cmdcommon.CMD_CONFIG_SHOW:
 		msg = cds.configShow()
+	case cmdcommon.CMD_WALLET_SHOW:
+		msg = cds.showWallet()
 	}
 
 	if msg == "" {
@@ -62,4 +65,17 @@ func (cds *CmdDefaultServer) configShow() string {
 	}
 
 	return string(bapc)
+}
+
+func (cds *CmdDefaultServer) showWallet() string {
+	if _, err := wallet.GetWallet(); err != nil {
+		return err.Error()
+	} else {
+		var s string
+		if s, err = wallet.ShowWallet(); err != nil {
+			return err.Error()
+		}
+
+		return s
+	}
 }
