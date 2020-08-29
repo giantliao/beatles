@@ -142,6 +142,7 @@ func (ss *StreamServer) handleConn(conn net.Conn) {
 
 func relay2(left, right net.Conn) error {
 	var wg sync.WaitGroup
+	defer wg.Wait()
 	wg.Add(1)
 	go func() {
 		defer func() {
@@ -175,7 +176,6 @@ func relay2(left, right net.Conn) error {
 		}
 	}
 
-	wg.Wait()
 
 	return nil
 }
