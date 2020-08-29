@@ -56,7 +56,6 @@ func NewStreamServer() *StreamServer {
 
 	ss := &StreamServer{addr: addr}
 	ss.quit = make(chan struct{})
-	ss.session = make(map[string]net.Conn)
 
 	return ss
 }
@@ -107,11 +106,8 @@ func (ss *StreamServer) serve() {
 func (ss *StreamServer) handleConn(conn net.Conn) {
 	defer ss.wg.Done()
 	defer conn.Close()
-	raddrstr := conn.RemoteAddr().String()
-	defer delete(ss.session, raddrstr)
 
 	conn.(*CloseConn).Conn.(*net.TCPConn).SetKeepAlive(true)
-	ss.session[raddrstr] = conn
 
 	if cs, err := handshake(conn); err != nil {
 		return
@@ -208,7 +204,5 @@ func relay2(left, right net.Conn) error {
 func (ss *StreamServer) StopServer() {
 	close(ss.quit)
 	ss.lis.Close()
-	for _, c := range ss.session {
-		c.Close()
-	}
+
 }
