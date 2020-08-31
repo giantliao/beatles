@@ -15,7 +15,6 @@ type StreamServer struct {
 	addr    string
 	quit    chan struct{}
 	lis     net.Listener
-	session map[string]net.Conn
 	wg      sync.WaitGroup
 }
 
@@ -175,30 +174,6 @@ func relay2(left, right net.Conn) error {
 	return nil
 }
 
-//func relay(left, right net.Conn) (int64, int64, error) {
-//	type res struct {
-//		N   int64
-//		Err error
-//	}
-//	ch := make(chan res)
-//
-//	go func() {
-//		n, err := io.Copy(right, left)
-//		right.SetDeadline(time.Now())
-//		left.SetDeadline(time.Now())
-//		ch <- res{n, err}
-//	}()
-//
-//	n, err := io.Copy(left, right)
-//	right.SetDeadline(time.Now())
-//	left.SetDeadline(time.Now())
-//	rs := <-ch
-//
-//	if err == nil {
-//		err = rs.Err
-//	}
-//	return n, rs.N, err
-//}
 
 func (ss *StreamServer) StopServer() {
 	close(ss.quit)
