@@ -94,27 +94,29 @@ var rootCmd = &cobra.Command{
 				return
 			}
 		}
-
-		err = wallet.LoadWallet(keypassword)
-		if err != nil {
-			panic("load wallet failed")
-		}
-
-		log.Println("register self to beatles master")
-		err = register.RegMiner()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		log.Println("start web server")
-		go webserver.StartWebDaemon()
-
-		log.Println("start stream server")
-		go streamserver.StartStreamServer()
-
+		start(keypassword)
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},
+}
+
+func start(passwd string)  {
+	err := wallet.LoadWallet(passwd)
+	if err != nil {
+		panic("load wallet failed")
+	}
+
+	log.Println("register self to beatles master")
+	err = register.RegMiner()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Println("start web server")
+	go webserver.StartWebDaemon()
+
+	log.Println("start stream server")
+	go streamserver.StartStreamServer()
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

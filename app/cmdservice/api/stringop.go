@@ -25,7 +25,7 @@ func (cso *CmdStringOPSrv) StringOpDo(cxt context.Context, so *cmdpb.StringOP) (
 		//msg = loadAccount(so.Param[0])
 	case cmdcommon.CMD_RUN:
 		//if len(so.)
-		msg = run(so.Param[0])
+		//msg = run(so.Param[0])
 	default:
 		return encapResp("Command Not Found"), nil
 	}

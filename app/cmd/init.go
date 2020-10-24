@@ -48,16 +48,16 @@ var initCmd = &cobra.Command{
 		}
 
 		if licenseServerBetalesAddr == "" || !(account.BeatleAddress(licenseServerBetalesAddr).IsValid()) {
-			log.Println("please beatles address")
+			log.Println("please input beatles master address")
 			return
 		}
 
 		if minerLocation == "" {
-			log.Println("please miner location")
+			log.Println("please input miner location")
 			return
 		}
 		if minerServerAddr != "" && net.ParseIP(minerServerAddr) == nil {
-			log.Println("please set correct miner ip address")
+			log.Println("please input correct miner ip address")
 			return
 		}
 
