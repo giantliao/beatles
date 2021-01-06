@@ -18,13 +18,10 @@ import (
 	"github.com/giantliao/beatles/app/cmdcommon"
 	"github.com/giantliao/beatles/app/cmdservice"
 	"github.com/giantliao/beatles/config"
+	"github.com/kprc/nbsnetwork/tools/processChan"
 	"github.com/sevlyar/go-daemon"
 	"github.com/spf13/cobra"
-	"io"
 	"log"
-	"net"
-	"os"
-
 	"path"
 )
 
@@ -73,13 +70,13 @@ var daemonCmd = &cobra.Command{
 				}
 			}
 
-			SendPasswd(daemondir,keypassword)
+			processChan.SendPasswd(daemondir,keypassword)
 			log.Println("beatles starting, please check log at:", path.Join(daemondir, "beatles.log"))
 			return
 		}
 		defer cntxt.Release()
 
-		passwd:=ReceivePasswd(daemondir)
+		passwd:=processChan.ReceivePasswd(daemondir)
 
 		start(passwd)
 
@@ -102,64 +99,4 @@ func init() {
 
 	daemonCmd.Flags().StringVarP(&cmdconfigfilename, "config-file-name", "c", "", "configuration file name")
 
-}
-
-func ReceivePasswd(dir string) string {
-
-	sockFile := path.Join(dir,"passwd.sock")
-
-	if err:=os.RemoveAll(sockFile);err!=nil{
-		log.Fatal("remove file failed")
-		return ""
-	}
-
-	l,err:=net.Listen("unix",sockFile)
-	if err!=nil{
-		log.Fatal("listen error:", err)
-	}
-
-	defer l.Close()
-
-	for{
-		conn, err:=l.Accept()
-		if err!=nil{
-			log.Fatal("accept error: ",err)
-		}
-		if e,p:=readpaswd(conn);e!=nil{
-			log.Fatal("conn error:",e.Error())
-		}else{
-			return p
-		}
-
-	}
-}
-
-func readpaswd(conn net.Conn) (err error,passwd string) {
-
-	defer conn.Close()
-
-	buf:=make([]byte,1024)
-	n,err:=conn.Read(buf)
-	if err!=nil && err!=io.EOF{
-		return err,""
-	}
-
-	return nil,string(buf[:n])
-
-}
-
-func SendPasswd(dir string,passwd string)  {
-
-	sockFile := path.Join(dir,"passwd.sock")
-
-	c,err:=net.Dial("unix",sockFile)
-	if err!=nil{
-		log.Fatal("connect to uds failed")
-	}
-	defer c.Close()
-
-	n,err:=c.Write([]byte(passwd))
-	if err!=nil || n!=len(passwd){
-		log.Fatal("write failed")
-	}
 }
