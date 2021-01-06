@@ -10,7 +10,10 @@ import (
 	"github.com/kprc/nbsnetwork/tools/httputil"
 	"log"
 	"strconv"
+	"time"
 )
+
+var regKeepAliveChan chan struct{}
 
 func RegMiner() error {
 	m := &miners.Miner{}
@@ -64,4 +67,25 @@ func RegMiner() error {
 	log.Println("register miner self ", result)
 
 	return nil
+}
+
+func StartKeepAlive()  {
+
+	regKeepAliveChan = make(chan struct{},1)
+
+	tic:=time.NewTicker(time.Second*300)
+	defer tic.Stop()
+
+	for{
+		select {
+		case <-tic.C:
+			RegMiner()
+		case <-regKeepAliveChan:
+			return
+		}
+	}
+}
+
+func StopKeepAlive()  {
+	close(regKeepAliveChan)
 }

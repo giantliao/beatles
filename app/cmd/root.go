@@ -117,6 +117,8 @@ func start(passwd string)  {
 
 	log.Println("start stream server")
 	go streamserver.StartStreamServer()
+
+	go register.StartKeepAlive()
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

@@ -1,6 +1,7 @@
 package cmdservice
 
 import (
+	"github.com/giantliao/beatles/register"
 	"github.com/giantliao/beatles/streamserver"
 	"github.com/giantliao/beatles/webserver"
 	"google.golang.org/grpc"
@@ -105,6 +106,7 @@ func stop() {
 
 	webserver.StopWebDaemon()
 	streamserver.StopStreamserver()
+	register.StopKeepAlive()
 	GetCmdServerInst().StopCmdService()
 
 }
