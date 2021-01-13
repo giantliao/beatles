@@ -26,6 +26,7 @@ type BtlConf struct {
 	PurchasePath      string `json:"purchase_path"`
 	ListMinerPath     string `json:"list_miner_path"`
 	RegisterMinerPath string `json:"register_miner_path"`
+	FreshLicensePath  string `json:"fresh_license_path"`
 
 	HttpServerPort int    `json:"http_server_port"`
 	StreamPort     int    `json:"stream_port"`
@@ -54,6 +55,7 @@ func (bc *BtlConf) InitCfg() *BtlConf {
 	bc.PurchasePath = "purchase"
 	bc.ListMinerPath = "list"
 	bc.RegisterMinerPath = "reg"
+	bc.FreshLicensePath = "freshlic"
 
 	bc.ExpireDb = "expire.db"
 	bc.DbPath = "db"
@@ -246,6 +248,10 @@ func (bc *BtlConf) GetRegisterMinerWebPath() string {
 	return "/" + bc.ApiPath + "/" + bc.RegisterMinerPath
 }
 
+
+func (bc *BtlConf) GetFreshLicensePath() string {
+	return "/" + bc.ApiPath + "/" + bc.FreshLicensePath
+}
 func (bc *BtlConf) GetMasterAccessUrl() string {
 	if strings.Contains(bc.MasterAccessUrl, "http") {
 		return bc.MasterAccessUrl
