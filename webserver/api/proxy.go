@@ -32,7 +32,7 @@ func (bmp *BeatlesMasterProxy) ServeHTTP(w http.ResponseWriter, r *http.Request)
 			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetpurchaseWebPath()
 		} else if strings.Contains(r.URL.Path, cfg.NoncePrice) {
 			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetNocePriceWebPath()
-		} else if strings.Contains(r.URL.Path,cfg.FreshLicensePath) {
+		} else if strings.Contains(r.URL.Path, cfg.FreshLicensePath) {
 			proxyUrl = cfg.GetMasterAccessUrl() + cfg.GetFreshLicensePath()
 		} else {
 			w.WriteHeader(500)

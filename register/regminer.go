@@ -69,14 +69,14 @@ func RegMiner() error {
 	return nil
 }
 
-func StartKeepAlive()  {
+func StartKeepAlive() {
 
-	regKeepAliveChan = make(chan struct{},1)
+	regKeepAliveChan = make(chan struct{}, 1)
 
-	tic:=time.NewTicker(time.Second*300)
+	tic := time.NewTicker(time.Second * 300)
 	defer tic.Stop()
 
-	for{
+	for {
 		select {
 		case <-tic.C:
 			RegMiner()
@@ -86,6 +86,6 @@ func StartKeepAlive()  {
 	}
 }
 
-func StopKeepAlive()  {
+func StopKeepAlive() {
 	close(regKeepAliveChan)
 }

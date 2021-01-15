@@ -70,13 +70,13 @@ var daemonCmd = &cobra.Command{
 				}
 			}
 
-			processChan.SendPasswd(daemondir,keypassword)
+			processChan.SendPasswd(daemondir, keypassword)
 			log.Println("beatles starting, please check log at:", path.Join(daemondir, "beatles.log"))
 			return
 		}
 		defer cntxt.Release()
 
-		passwd:=processChan.ReceivePasswd(daemondir)
+		passwd := processChan.ReceivePasswd(daemondir)
 
 		start(passwd)
 

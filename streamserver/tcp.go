@@ -12,10 +12,10 @@ import (
 )
 
 type StreamServer struct {
-	addr    string
-	quit    chan struct{}
-	lis     net.Listener
-	wg      sync.WaitGroup
+	addr string
+	quit chan struct{}
+	lis  net.Listener
+	wg   sync.WaitGroup
 }
 
 type CloseConn struct {
@@ -173,7 +173,6 @@ func relay2(left, right net.Conn) error {
 
 	return nil
 }
-
 
 func (ss *StreamServer) StopServer() {
 	close(ss.quit)

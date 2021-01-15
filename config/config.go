@@ -248,7 +248,6 @@ func (bc *BtlConf) GetRegisterMinerWebPath() string {
 	return "/" + bc.ApiPath + "/" + bc.RegisterMinerPath
 }
 
-
 func (bc *BtlConf) GetFreshLicensePath() string {
 	return "/" + bc.ApiPath + "/" + bc.FreshLicensePath
 }

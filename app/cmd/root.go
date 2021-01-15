@@ -99,7 +99,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func start(passwd string)  {
+func start(passwd string) {
 	err := wallet.LoadWallet(passwd)
 	if err != nil {
 		panic("load wallet failed")
