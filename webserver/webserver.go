@@ -23,6 +23,7 @@ func StartWebDaemon() {
 	mux.Handle(cfg.GetListMinersWebPath(), &api.BeatlesMasterProxy{})
 	mux.Handle(cfg.GetpurchaseWebPath(), &api.BeatlesMasterProxy{})
 	mux.Handle(cfg.GetFreshLicensePath(), &api.BeatlesMasterProxy{})
+	mux.Handle(cfg.GetPingWebPath(),&api.PingTest{})
 
 	if cfg.HttpServerPort == 0 {
 		cfg.HttpServerPort = port.HttpPort()

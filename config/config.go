@@ -27,6 +27,7 @@ type BtlConf struct {
 	ListMinerPath     string `json:"list_miner_path"`
 	RegisterMinerPath string `json:"register_miner_path"`
 	FreshLicensePath  string `json:"fresh_license_path"`
+	PingPath		  string `json:"ping_path"`
 
 	HttpServerPort int    `json:"http_server_port"`
 	StreamPort     int    `json:"stream_port"`
@@ -56,6 +57,7 @@ func (bc *BtlConf) InitCfg() *BtlConf {
 	bc.ListMinerPath = "list"
 	bc.RegisterMinerPath = "reg"
 	bc.FreshLicensePath = "freshlic"
+	bc.PingPath = "ping"
 
 	bc.ExpireDb = "expire.db"
 	bc.DbPath = "db"
@@ -244,6 +246,9 @@ func (bc *BtlConf) GetListMinersWebPath() string {
 	return "/" + bc.ApiPath + "/" + bc.ListMinerPath
 }
 
+func (bc *BtlConf)GetPingWebPath() string  {
+	return "/" + bc.ApiPath + "/" + bc.PingPath
+}
 func (bc *BtlConf) GetRegisterMinerWebPath() string {
 	return "/" + bc.ApiPath + "/" + bc.RegisterMinerPath
 }
